@@ -1,91 +1,103 @@
 import React, { Component } from 'react'
-import AddChannelForm from './AddChannelForm';
-import ChannelView from './ChannelView';
-import Sidebar from './Sidebar';
-
-// NO GOOD
-// const messages = [
-
-// ]
+import Menu from './Menu'
+import OrderView from './OrderView'
 
 export default class App extends Component {
     constructor(props) {
-        super(props);
-        // GOOD
+        super(props)
+
+        // Set up and given our state an initial value
         this.state = {
-            channelList: [
+            orderList: [
                 {
                     id: 0,
-                    name: "previous-class-recordings",
-                    messages: [
-                        {
-                            id: 0,
-                            author: "Natalie",
-                            text: "Link to YouTube video",
-                            unread: true
-                        },
-                        {
-                            id: 1,
-                            author: "Jose",
-                            text: "Link to YouTube video",
-                            unread: false
-                        }
-                    ]
-                },
-                {
-                    id: 3,
-                    name: "random",
-                    messages: []
-                },
-                {
-                    id: 4,
-                    name: "general",
-                    messages: [
-                        {
-                            id: 0,
-                            author: "Simone",
-                            text: "How's it going?",
-                            unread: false
-                        }
-                    ]
+                    type: "burrito"
                 }
-            ],
-            selectedChannelId: 0
+            ]
         }
     }
 
-    setSelectedChannelId = (newId) => {
-        // DON'T DO
-        //this.state.selectedChannelId = 1
-        this.setState({ selectedChannelId: newId })
+    addOrder = (newOrder) => {
+        // BAD
+        //this.state.orderState = "banana"
+
+        // BAD
+        // this.state.orderList.push(newOrder)
+
+        // const updatedCopy = this.state.orderList.slice()
+        // updatedCopy.push(newOrder)
+
+        // Make an object instead
+        const orderItem = {
+            id: this.state.orderList[this.state.orderList.length - 1].id + 1, // hack
+            type: newOrder
+        }
+
+        // GOOD
+        this.setState({ orderList: this.state.orderList.concat(orderItem) })
     }
 
-    addChannel = (newChannelData) => {
-        this.setState(state => {
-            const newChannel = {
-                id: state.channelList[state.channelList.length - 1].id + 1, // hack
-                name: newChannelData.name,
-                description: newChannelData.description,
-                messages: []
-            }
-            const copyOfChannelList = [...state.channelList]
-            copyOfChannelList.push(newChannel);
-            return { channelList: copyOfChannelList }
-        })
+    removeOrder = (idToDelete) => {
+        this.setState({ orderList: this.state.orderList.filter(order => order.id !== idToDelete) })
+    }
+
+    addCheese = (idToUpdate) => {
+        const orderToUpdate = this.state.orderList.find(order => order.id === idToUpdate)
+        const index = this.state.orderList.indexOf(orderToUpdate);
+
+        // BAD
+        //orderToUpdate.type += " with cheese"
+
+        // GOOD
+        const copyOfOrder = { ...orderToUpdate }
+        copyOfOrder.type += " with cheese"
+
+        // BAD
+        //this.state.orderList[index] = copyOfOrder
+
+        const copyOfOrderList = this.state.orderList.slice()
+        copyOfOrderList[index] = copyOfOrder;
+
+        this.setState({ orderList: copyOfOrderList })
+
+        // Fancy kind of complex way
+        // this.setState({ orderList: this.state.orderList.map(order => {
+        //     if(order.id === idToUpdate) {
+        //         const copyOfOrder = { ...orderToUpdate }
+        //         copyOfOrder.type += " with cheese"
+        //         return copyOfOrder
+        //     }
+        //     return order;
+        // })})
+
+        // VERY FANCY HANDLE WITH CARE
+        // this.setState({ 
+        //     orderList: this.state.orderList.map(
+        //         order => (order.id === idToUpdate) ? { ...orderToUpdate, type: order.type + " with cheese" } : order 
+        //     ) 
+        // })
     }
 
     render() {
-        // NO GOOD
-        // this.messages = []
-
         return (
-            <div className="container">
-                <div className="row">
-                    <Sidebar channelList={this.state.channelList} setSelectedChannelId={this.setSelectedChannelId}/>
-                    <ChannelView channel={this.state.channelList.find(channel => channel.id === this.state.selectedChannelId)} />
-                    <AddChannelForm onAddChannel={this.addChannel} />
-                </div>
+            <div>
+                { this.state.order }
+                { this.props.something }
+                <Menu addOrder={this.addOrder} />
+                <OrderView orderList={this.state.orderList} removeOrder={this.removeOrder} addCheese={this.addCheese}/>
             </div>
         )
     }
 }
+
+
+// You can imagine the Component class like this
+// class Component {
+//     constructor(props) {
+//         this.props = props;
+//     }
+//
+//     setState(newState) {
+//         // update state
+//     }
+// }
