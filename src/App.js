@@ -1,102 +1,56 @@
 import React, { Component } from 'react'
-import OrderMenu from './OrderMenu'
-import OrderView from './OrderView'
+import AddDishForm from './AddDishForm';
+import MenuList from './MenuList';
 
 export default class App extends Component {
     constructor(props) {
-        // make sure React can set up props and such
         super(props);
-        
-        // Set up and give initial values to any state that we want
+
         this.state = {
-            orderList: [
-                {
-                    id: 0,
-                    type: "banana"
-                }
-            ]
+            dishesList: [ { id: 0, name: "Tacos", price: 2 }, { id: 1, name: "Burrito", price: 5 } ]
         }
     }
 
-    setOrder = (newOrderType) => {
-        // BAD
-        // this.state.order = newOrder
+    deleteDish = (idToDelete) => {
+        // BAD: don't update state directly!
+        //const indexToDelete = this.state.dishesList.findIndex(dish => dish.id === idToDelete)
+        //this.state.dishesList.splice(indexToDelete, 1)
 
-        // GOOD
-        //this.setState({ order: newOrder })
+        // GOOD: make a copy, make the change to the copy, set the state to the changed copy
+        //const indexToDelete = this.state.dishesList.findIndex(dish => dish.id === idToDelete)
+        // const copyOfDishesList = this.state.dishesList.slice()
+        // copyOfDishesList.splice(indexToDelete, 1)
+        // this.setState({ dishesList: copyOfDishesList })
 
-        // BAD
-        //this.state.orderList.push(newOrder)
+        // GREAT: use an array method that naturally makes a copy
+        this.setState({ dishesList: this.state.dishesList.filter(dish => dish.id !== idToDelete ) })
+    }
 
-        // GOOD BUT CLUNKY
-        // const copyOfArray = this.state.orderList.slice()
-        // copyOfArray.push(newOrder);
-        // this.setState({ orderList: copyOfArray })
-
-        // Make it an object
-        const newOrderItem = {
-            id: this.state.orderList[this.state.orderList.length - 1].id + 1, // hack
-            type: newOrderType
+    createDish = (newDishName, newDishPrice) => {
+        const newDish = {
+            id: this.state.dishesList[this.state.dishesList.length - 1].id + 1, // not a perfect hack
+            name: newDishName,
+            price: newDishPrice
         }
 
-        // GOOD STREAMLINED WAY
-        this.setState({ orderList: this.state.orderList.concat(newOrderItem) })
-    }
+        // BAD: don't update state directly!
+        // this.state.dishesList.push(newDish);
 
-    removeOrder = (idToDelete) => {
-        // GOOD STREAMLINED WAY
-        this.setState({ orderList: this.state.orderList.filter(order => order.id !== idToDelete) })
-    }
+        // GOOD: make a copy, make the change to the copy, set the state to the changed copy
+        // const copyOfDishesList = this.state.dishesList.slice()
+        // copyOfDishesList.push(newDish);
+        // this.setState({ dishesList: copyOfDishesList })
 
-    updateOrder = (idToUpdate, newType) => {
-        const itemToUpdate = this.state.orderList.find(order => order.id === idToUpdate);
-        const index = this.state.orderList.indexOf(itemToUpdate);
-
-        // BAD
-        // itemToUpdate.type = newType;
-
-        // CLUNKY
-        // const copyOfItem = { ...itemToUpdate }
-        // copyOfItem.type = newType;
-
-        // STREAMLINED
-        const copyOfItem = { ...itemToUpdate, type: newType }
-
-        // BAD
-        // this.state.orderList[index] = copyOfItem
-
-        const copyOfArray = this.state.orderList.slice()
-        copyOfArray[index] = copyOfItem;
-
-        this.setState({ orderList: copyOfArray })
+        // GREAT: use an array method that naturally makes a copy
+        this.setState({ dishesList: this.state.dishesList.concat(newDish) })
     }
 
     render() {
         return (
             <div>
-                <OrderMenu setOrder={this.setOrder}/>
-                <OrderView orderList={this.state.orderList} removeOrder={this.removeOrder} updateOrder={this.updateOrder} />
+                <AddDishForm onSubmit={this.createDish}/>
+                <MenuList dishesList={this.state.dishesList} onDelete={this.deleteDish}/>
             </div>
         )
     }
 }
-
-
-// props = {
-//     orderThing: "none"
-// }
-
-
-
-
-
-// You could imagine it this way
-// class Component {
-//     constructor(props) {
-//         this.props = props;
-//     }
-
-//     setState = (newState) => {
-//         // update the state
-//     }
-// }
