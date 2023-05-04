@@ -1,56 +1,76 @@
-import React, { Component } from 'react'
-import AddDishForm from './AddDishForm';
-import MenuList from './MenuList';
+import { useState } from 'react'
+import CatView from './CatView'
+import CatForm from './CatForm'
 
-export default class App extends Component {
-    constructor(props) {
-        super(props);
+let nextId = 5
 
-        this.state = {
-            dishesList: [ { id: 0, name: "Tacos", price: 2 }, { id: 1, name: "Burrito", price: 5 } ]
-        }
-    }
+export default function App() {
+    const [catList, setCatList] = useState([])
 
-    deleteDish = (idToDelete) => {
-        // BAD: don't update state directly!
-        //const indexToDelete = this.state.dishesList.findIndex(dish => dish.id === idToDelete)
-        //this.state.dishesList.splice(indexToDelete, 1)
-
-        // GOOD: make a copy, make the change to the copy, set the state to the changed copy
-        //const indexToDelete = this.state.dishesList.findIndex(dish => dish.id === idToDelete)
-        // const copyOfDishesList = this.state.dishesList.slice()
-        // copyOfDishesList.splice(indexToDelete, 1)
-        // this.setState({ dishesList: copyOfDishesList })
-
-        // GREAT: use an array method that naturally makes a copy
-        this.setState({ dishesList: this.state.dishesList.filter(dish => dish.id !== idToDelete ) })
-    }
-
-    createDish = (newDishName, newDishPrice) => {
-        const newDish = {
-            id: this.state.dishesList[this.state.dishesList.length - 1].id + 1, // not a perfect hack
-            name: newDishName,
-            price: newDishPrice
+    const addCat = (newCatData) => {
+        const newCat = {
+            id: nextId++, // little hack that makes unique ids
+            ...newCatData
         }
 
-        // BAD: don't update state directly!
-        // this.state.dishesList.push(newDish);
+        // BAD - setting state directly
+        //catList.push(newCat)
 
-        // GOOD: make a copy, make the change to the copy, set the state to the changed copy
-        // const copyOfDishesList = this.state.dishesList.slice()
-        // copyOfDishesList.push(newDish);
-        // this.setState({ dishesList: copyOfDishesList })
+        // GOOD - working off a copy
+        // const newCatList = catList.slice()
+        // newCatList.push(newCat)
+        // setCatList(newCatList)
 
-        // GREAT: use an array method that naturally makes a copy
-        this.setState({ dishesList: this.state.dishesList.concat(newDish) })
+        // GOOD - working off a copy
+        // const newCatList = [...catList]
+        // newCatList.push(newCat)
+        // setCatList(newCatList)
+
+        // GOOD - working off a copy
+        // const newCatList = [...catList, newCat]
+        // setCatList(newCatList)
+
+        // FANTASTIC - working off a copy and so streamlined!
+        //setCatList([ ...catList, newCat ])
+
+        // FANTASTIC - working off a copy and so streamlined!
+        setCatList(catList.concat(newCat))
     }
 
-    render() {
-        return (
-            <div>
-                <AddDishForm onSubmit={this.createDish}/>
-                <MenuList dishesList={this.state.dishesList} onDelete={this.deleteDish}/>
-            </div>
-        )
+
+    const deleteCat = (idToDelete) => {
+        setCatList(catList.filter(cat => cat.id !== idToDelete))
     }
+
+    const updateCatName = (idToUpdate, newName) => {
+        // const copyOfCatList = [...catList]
+        // const catToUpdate = copyOfCatList.find(cat => cat.id === idToUpdate)
+
+        // const copyOfCat = { ...catToUpdate }
+        // copyOfCat.name = newName
+
+        // const index = copyOfCatList.findIndex(cat => cat.id === idToUpdate)
+        // copyOfCatList[index] = copyOfCat
+
+        // setCatList(copyOfCatList)
+
+        setCatList(catList.map(cat =>
+            (cat.id === idToUpdate) ? { ...cat, name: newName } : cat
+        ))
+
+    }
+    
+
+    return (
+        <div>
+            <CatForm addCat={addCat}/>
+            {catList.map(c => <CatView cat={c} key={c.id} deleteCat={deleteCat} updateCatName={updateCatName}/> )}
+        </div>
+    )
 }
+
+
+
+//{messages.map(message => <Message message={message} key={message.id}/>)}
+
+//{ ARRAY_OF_DATA.map(CALLBACK_PARAMETER_WITH_ONE_ITEM => <COMPONENT_NAME PROP_NAME={CALLBACK_PARAMETER_WITH_ONE_ITEM} key={SOMETHING_UNIQUE}/>) }
