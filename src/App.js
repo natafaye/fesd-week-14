@@ -1,76 +1,86 @@
-import { useState } from 'react'
-import CatView from './CatView'
-import CatForm from './CatForm'
+import { useState } from "react"
+import CatCard from "./CatCard";
+import AddCatForm from "./AddCatForm";
+import EditCatForm from "./EditCatForm";
 
-let nextId = 5
+let nextId = 2;
 
 export default function App() {
+    const [user, setUser] = useState({ name: "Natalie", role: "Awesome", numSales: 0 })
     const [catList, setCatList] = useState([])
+    const [editCatId, setEditCatId] = useState(null)
+    const [showForm, setShowForm] = useState(false)
 
-    const addCat = (newCatData) => {
-        const newCat = {
-            id: nextId++, // little hack that makes unique ids
-            ...newCatData
-        }
+    function updateRole() {
+        // BLASPHEMY
+        // user.numSales++
+        // setUser(user)
 
-        // BAD - setting state directly
-        //catList.push(newCat)
+        // GREAT
+        // const copyOfUser = { ...user }
+        // copyOfUser.role = "Lame"
+        // setUser(copyOfUser)
 
-        // GOOD - working off a copy
-        // const newCatList = catList.slice()
-        // newCatList.push(newCat)
-        // setCatList(newCatList)
+        // FANCY
+        setUser({ ...user, role: "Lame", numSales: user.numSales + 1 })
 
-        // GOOD - working off a copy
-        // const newCatList = [...catList]
-        // newCatList.push(newCat)
-        // setCatList(newCatList)
+        // this.setState({ user: copyOfUser })
+    }
 
-        // GOOD - working off a copy
-        // const newCatList = [...catList, newCat]
-        // setCatList(newCatList)
+    function addCat(newCatData) {
+        const newCat = { id: nextId++, ...newCatData }
 
-        // FANTASTIC - working off a copy and so streamlined!
-        //setCatList([ ...catList, newCat ])
+        // GREAT
+        // const copyOfCatList = [...catList]
+        // copyOfCatList.push(newCat)
+        // setCatList(copyOfCatList)
 
-        // FANTASTIC - working off a copy and so streamlined!
+        // BETTER
+        // setCatList([ ...catList, newCat ])
+        // BETTER
         setCatList(catList.concat(newCat))
     }
 
+    function deleteCat(idToDelete) {
+        // GREAT
+        // const indexToDelete = catList.findIndex(cat => cat.id === idToDelete)
+        // const copyOfCatList = [...catList]
+        // copyOfCatList.splice(indexToDelete, 1)
+        // setCatList(copyOfCatList)
 
-    const deleteCat = (idToDelete) => {
+        // BETTER
         setCatList(catList.filter(cat => cat.id !== idToDelete))
     }
 
-    const updateCatName = (idToUpdate, newName) => {
+    function startUpdate(idToUpdate) {
+        setShowForm(true)
+        setEditCatId(idToUpdate)
+    }
+
+    function updateCat(newData, idToUpdate) {
+        // FINE
         // const copyOfCatList = [...catList]
-        // const catToUpdate = copyOfCatList.find(cat => cat.id === idToUpdate)
-
-        // const copyOfCat = { ...catToUpdate }
+        // const indexToUpdate = catList.findIndex(cat => cat.id === idToUpdate)
+        // const copyOfCat = { ...catList[indexToUpdate] }
         // copyOfCat.name = newName
-
-        // const index = copyOfCatList.findIndex(cat => cat.id === idToUpdate)
-        // copyOfCatList[index] = copyOfCat
-
+        // copyOfCatList[indexToUpdate] = copyOfCat
         // setCatList(copyOfCatList)
 
         setCatList(catList.map(cat =>
-            (cat.id === idToUpdate) ? { ...cat, name: newName } : cat
+            (cat.id === idToUpdate) ?
+                { ...cat, ...newData } :
+                cat
         ))
-
+        setShowForm(false)
+        setEditCatId(null)
     }
-    
 
     return (
-        <div>
-            <CatForm addCat={addCat}/>
-            {catList.map(c => <CatView cat={c} key={c.id} deleteCat={deleteCat} updateCatName={updateCatName}/> )}
-        </div>
+        <>
+            <div>App</div>
+            <AddCatForm addCat={addCat}/>
+            { showForm ? <EditCatForm updateCat={updateCat} editCatId={editCatId} catList={catList} /> : null }
+            {catList.map(cat => <CatCard cat={cat} key={cat.id} startUpdate={startUpdate} deleteCat={deleteCat} isEditing={showForm} />)}
+        </>
     )
 }
-
-
-
-//{messages.map(message => <Message message={message} key={message.id}/>)}
-
-//{ ARRAY_OF_DATA.map(CALLBACK_PARAMETER_WITH_ONE_ITEM => <COMPONENT_NAME PROP_NAME={CALLBACK_PARAMETER_WITH_ONE_ITEM} key={SOMETHING_UNIQUE}/>) }
