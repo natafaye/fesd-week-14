@@ -1,86 +1,76 @@
 import { useState } from "react"
-import CatCard from "./CatCard";
-import AddCatForm from "./AddCatForm";
-import EditCatForm from "./EditCatForm";
+import { TEST_FOOD } from "./TEST_DATA"
+import FoodForm from "./FoodForm"
 
-let nextId = 2;
+let nextId = 2 // little hack to make unique ids
 
 export default function App() {
-    const [user, setUser] = useState({ name: "Natalie", role: "Awesome", numSales: 0 })
-    const [catList, setCatList] = useState([])
-    const [editCatId, setEditCatId] = useState(null)
-    const [showForm, setShowForm] = useState(false)
+    const [foodList, setFoodList] = useState(TEST_FOOD)
 
-    function updateRole() {
-        // BLASPHEMY
-        // user.numSales++
-        // setUser(user)
+    
 
-        // GREAT
-        // const copyOfUser = { ...user }
-        // copyOfUser.role = "Lame"
-        // setUser(copyOfUser)
-
-        // FANCY
-        setUser({ ...user, role: "Lame", numSales: user.numSales + 1 })
-
-        // this.setState({ user: copyOfUser })
+    const deleteFood = (id) => {
+        setFoodList(foodList.filter(food => food.id !== id))
     }
 
-    function addCat(newCatData) {
-        const newCat = { id: nextId++, ...newCatData }
-
-        // GREAT
-        // const copyOfCatList = [...catList]
-        // copyOfCatList.push(newCat)
-        // setCatList(copyOfCatList)
-
-        // BETTER
-        // setCatList([ ...catList, newCat ])
-        // BETTER
-        setCatList(catList.concat(newCat))
+    const incrementQuantity = (id) => {
+        setFoodList(foodList.map(food => 
+            (food.id === id) ?
+              { ...food, quantity: food.quantity + 1 } :
+              food
+          ))
+          
     }
 
-    function deleteCat(idToDelete) {
-        // GREAT
-        // const indexToDelete = catList.findIndex(cat => cat.id === idToDelete)
-        // const copyOfCatList = [...catList]
-        // copyOfCatList.splice(indexToDelete, 1)
-        // setCatList(copyOfCatList)
+    const addFood = (foodData) => {
+        const newFood = { id: nextId++, ...foodData }
+        // BLASPHEMY BAD - setting state directly
+        //foodList.push(donuts)
 
-        // BETTER
-        setCatList(catList.filter(cat => cat.id !== idToDelete))
-    }
+        // PERFECTLY GOOD
+        // const copyOfFoodList = foodList.slice()
+        // copyOfFoodList.push(donuts)
+        // setFoodList(copyOfFoodList)
 
-    function startUpdate(idToUpdate) {
-        setShowForm(true)
-        setEditCatId(idToUpdate)
-    }
+        // FANCY TRICK
+        setFoodList( foodList.concat(newFood) )
 
-    function updateCat(newData, idToUpdate) {
-        // FINE
-        // const copyOfCatList = [...catList]
-        // const indexToUpdate = catList.findIndex(cat => cat.id === idToUpdate)
-        // const copyOfCat = { ...catList[indexToUpdate] }
-        // copyOfCat.name = newName
-        // copyOfCatList[indexToUpdate] = copyOfCat
-        // setCatList(copyOfCatList)
-
-        setCatList(catList.map(cat =>
-            (cat.id === idToUpdate) ?
-                { ...cat, ...newData } :
-                cat
-        ))
-        setShowForm(false)
-        setEditCatId(null)
+        // FANCY TRICK 2
+        // setFoodList( [...foodList, donuts] )
     }
 
     return (
         <>
-            <div>App</div>
-            <AddCatForm addCat={addCat}/>
-            { showForm ? <EditCatForm updateCat={updateCat} editCatId={editCatId} catList={catList} /> : null }
-            {catList.map(cat => <CatCard cat={cat} key={cat.id} startUpdate={startUpdate} deleteCat={deleteCat} isEditing={showForm} />)}
+            <div>
+                <FoodForm addFood={addFood} />
+                { foodList.map(food => 
+                    <div key={food.id}>
+                        {food.name} - {food.quantity}
+                        <button onClick={() => deleteFood(food.id)}>Delete</button>
+                        <button onClick={() => incrementQuantity(food.id)}>Add Quantity</button>
+                    </div> 
+                )}
+            </div>
         </>
     )
 }
+
+
+// props = {
+//     addFood: (foodData) => {
+//         const newFood = { id: nextId++, ...foodData }
+//         // BLASPHEMY BAD - setting state directly
+//         //foodList.push(donuts)
+
+//         // PERFECTLY GOOD
+//         // const copyOfFoodList = foodList.slice()
+//         // copyOfFoodList.push(donuts)
+//         // setFoodList(copyOfFoodList)
+
+//         // FANCY TRICK
+//         setFoodList( foodList.concat(newFood) )
+
+//         // FANCY TRICK 2
+//         // setFoodList( [...foodList, donuts] )
+//     }
+// }
