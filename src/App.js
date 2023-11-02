@@ -1,76 +1,74 @@
 import { useState } from "react"
-import { TEST_FOOD } from "./TEST_DATA"
-import FoodForm from "./FoodForm"
+import { Sidebar } from "./Sidebar"
+import CreateProductForm from "./CreateProductForm"
+import ProductList from "./ProductList"
 
-let nextId = 2 // little hack to make unique ids
+let nextId = 3
 
 export default function App() {
-    const [foodList, setFoodList] = useState(TEST_FOOD)
+    // two pieces of state
+    const [userName, setUserName] = useState("Not Logged In")
+    const [productList, setProductList] = useState( [
+        {
+            id: 0,
+            title: "Shoes"
+        },
+        {
+            id: 1,
+            title: "Hat"
+        }
+    ] )
 
-    
+    // event listeners that update state
 
-    const deleteFood = (id) => {
-        setFoodList(foodList.filter(food => food.id !== id))
+    const onLoginClick = () => {
+        setUserName("natalieisthebest")
     }
 
-    const incrementQuantity = (id) => {
-        setFoodList(foodList.map(food => 
-            (food.id === id) ?
-              { ...food, quantity: food.quantity + 1 } :
-              food
-          ))
-          
+    const addProduct = (newProductData) => {
+        // Just add an id on there
+        const newProduct = {
+            id: nextId++, // a little trick to get unique ids when creating
+            ...newProductData // dumps out all the properties on newProductData, and puts them on this object too (makes a copy)
+        }
+
+        // BAD BAD BAD
+        //productList.push(newProduct)
+        //setProductList(productList)
+        // You're likely to end up with your changes happening twice (because of strict mode - but DON'T TURN IT OFF)
+
+        // GOOD: Work off copies
+        // const copyOfProductList = productList.slice()
+        // copyOfProductList.push(newProduct)
+        // setProductList(copyOfProductList)
+
+        // FANTASTIC
+        setProductList( productList.concat(newProduct) )
+
+        // FANTASTIC
+        // setProductList( [...productList, newProduct] )
     }
 
-    const addFood = (foodData) => {
-        const newFood = { id: nextId++, ...foodData }
-        // BLASPHEMY BAD - setting state directly
-        //foodList.push(donuts)
+    const handleDeleteProduct = (idToDelete) => {
+        // BAD BAD BAD
+        // productList.splice(fdsfds)
 
-        // PERFECTLY GOOD
-        // const copyOfFoodList = foodList.slice()
-        // copyOfFoodList.push(donuts)
-        // setFoodList(copyOfFoodList)
-
-        // FANCY TRICK
-        setFoodList( foodList.concat(newFood) )
-
-        // FANCY TRICK 2
-        // setFoodList( [...foodList, donuts] )
+        // FANTASTIC
+        // Filter makes a copy of the array with one product missing (the one with the id to delete)
+        setProductList( productList.filter(product => product.id !== idToDelete) )
     }
+
+    // rendering code
 
     return (
-        <>
+        <div>
+            <Sidebar />
+            User: {userName}
+            <button className="btn btn-outline-primary" onClick={onLoginClick}>Log In</button>
             <div>
-                <FoodForm addFood={addFood} />
-                { foodList.map(food => 
-                    <div key={food.id}>
-                        {food.name} - {food.quantity}
-                        <button onClick={() => deleteFood(food.id)}>Delete</button>
-                        <button onClick={() => incrementQuantity(food.id)}>Add Quantity</button>
-                    </div> 
-                )}
+                <CreateProductForm onSubmit={addProduct}/>
+                <ProductList productList={productList} deleteProduct={handleDeleteProduct}/>
             </div>
-        </>
+        </div>
     )
 }
-
-
-// props = {
-//     addFood: (foodData) => {
-//         const newFood = { id: nextId++, ...foodData }
-//         // BLASPHEMY BAD - setting state directly
-//         //foodList.push(donuts)
-
-//         // PERFECTLY GOOD
-//         // const copyOfFoodList = foodList.slice()
-//         // copyOfFoodList.push(donuts)
-//         // setFoodList(copyOfFoodList)
-
-//         // FANCY TRICK
-//         setFoodList( foodList.concat(newFood) )
-
-//         // FANCY TRICK 2
-//         // setFoodList( [...foodList, donuts] )
-//     }
-// }
