@@ -1,74 +1,45 @@
-import { useState } from "react"
-import { Sidebar } from "./Sidebar"
-import CreateProductForm from "./CreateProductForm"
-import ProductList from "./ProductList"
+import { useState } from "react";
+import NumberPicker from "./NumberPicker"
+import SudokuBoard from "./SudokuBoard"
 
-let nextId = 3
+function App() {
+  const [selectedNumber, setSelectedNumber] = useState(1)
+  const [playerName, setPlayerName] = useState("")
 
-export default function App() {
-    // two pieces of state
-    const [userName, setUserName] = useState("Not Logged In")
-    const [productList, setProductList] = useState( [
-        {
-            id: 0,
-            title: "Shoes"
-        },
-        {
-            id: 1,
-            title: "Hat"
-        }
-    ] )
+  // 1) Make a piece of state
+  const [nameValue, setNameValue] = useState("")
 
-    // event listeners that update state
+  const saveName = () => {
+    setPlayerName(nameValue)
 
-    const onLoginClick = () => {
-        setUserName("natalieisthebest")
-    }
+    // We would have done this with DOM manipulation
+    // playerName = nameTextbox.value
 
-    const addProduct = (newProductData) => {
-        // Just add an id on there
-        const newProduct = {
-            id: nextId++, // a little trick to get unique ids when creating
-            ...newProductData // dumps out all the properties on newProductData, and puts them on this object too (makes a copy)
-        }
+    // clear the textbox
+    setNameValue("")
+  }
 
-        // BAD BAD BAD
-        //productList.push(newProduct)
-        //setProductList(productList)
-        // You're likely to end up with your changes happening twice (because of strict mode - but DON'T TURN IT OFF)
-
-        // GOOD: Work off copies
-        // const copyOfProductList = productList.slice()
-        // copyOfProductList.push(newProduct)
-        // setProductList(copyOfProductList)
-
-        // FANTASTIC
-        setProductList( productList.concat(newProduct) )
-
-        // FANTASTIC
-        // setProductList( [...productList, newProduct] )
-    }
-
-    const handleDeleteProduct = (idToDelete) => {
-        // BAD BAD BAD
-        // productList.splice(fdsfds)
-
-        // FANTASTIC
-        // Filter makes a copy of the array with one product missing (the one with the id to delete)
-        setProductList( productList.filter(product => product.id !== idToDelete) )
-    }
-
-    // rendering code
-
-    return (
-        <div>
-            <Sidebar />
-            User: {userName}
-            <button className="btn btn-outline-primary" onClick={onLoginClick}>Log In</button>
-            <div>
-                <CreateProductForm onSubmit={addProduct}/>
-                <ProductList productList={productList} deleteProduct={handleDeleteProduct}/>
-            </div>
-        </div>
-    )
+  return (
+    <div>
+      {/* 2) Tie the piece of state to the input */}
+      <div>
+        <input type="text" className="form-control" value={nameValue} onChange={(event) => setNameValue(event.target.value)}/>
+        <button className="btn btn-success" onClick={saveName}>Save</button>
+      </div>
+      <h4>Player 1 Name: {playerName}</h4>
+      <SudokuBoard 
+        selectedNumber={selectedNumber}
+      /> {/* SudokuBoard({ selectedNumber: 1 }) */}
+      <NumberPicker 
+        selectedNumber={selectedNumber} 
+        setSelectedNumber={setSelectedNumber}
+      /> {/* NumberPicker({ selectedNumber: 1, setSelectedNumber: function }) */}
+    </div>
+  )
 }
+
+export default App;
+
+
+
+//const myString = `My name is ${myName}`
