@@ -9,3 +9,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <App />
   </React.StrictMode>,
 )
+
+
+// When you see this:
+// <Component />
+// in the background React does this: Component()
+// and whatever JSX that function returns gets spit out there

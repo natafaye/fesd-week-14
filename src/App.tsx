@@ -1,17 +1,22 @@
-import LetterOptions from "./components/LetterOptions"
-import Man from "./components/Man"
-import Word from "./components/Word"
+import Board from "./Board"
+import Footer from "./Footer"
+import LowScoreTable from "./LowScoreTable"
+import Message from "./Message"
+import NameEntry from "./NameEntry"
 
 export default function App() {
+  const loseMessage = "You lose"
   return (
     <div>
-      <Man/>
-      <Word/>
-      <LetterOptions/>
+      <NameEntry/>
+      <Message messageText={loseMessage} textColor="blue" />
+      <Board />
+      <Footer/>
+      <LowScoreTable/>
     </div>
   )
 }
 
-
-// variables in different contexts with the same data probably should be named the same
-// variables in the same context with different data, please name those different as possible
+//Message(messageText) CAN'T DO THIS
+// In the background React will do this:
+// Message({ messageText: "You lose" })
