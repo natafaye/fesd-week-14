@@ -1,34 +1,50 @@
-import CardList from "./CardList"
-import getRandomCard from "./getRandomCard"
+import Counter from "./Counter"
+
+const resources = [
+  {
+    name: "Bears",
+    count: 3
+  },
+  {
+    name: "Elk",
+    count: 10
+  },
+  {
+    name: "Fish",
+    count: 1
+  },
+]
+
+// const mappedArray = [
+//   <Counter label="Bears" amount={3} />,
+//   <Counter label="Elk" amount={10} />,
+//   <Counter label="Fish" amount={1} />
+// ]
+
+// The declarative way to show an array of stuff is using the map array method
 
 export default function App() {
-  // You cannot add or remove from this hand (without state)
-  const myHand = [ getRandomCard(), getRandomCard() ]
-  const dealerHand = [ getRandomCard(), getRandomCard() ]
-
-  // Listening Function
-  const handleStand = () => {
-    alert("Standing!")
-  }
-
-  // Return what that part of the page should look like right now (eventually based on the state)
   return (
-    <div className="container mt-3">
-      <h2>Blackjack</h2>
-      <div>
-        <h4>Dealer</h4>
-        <CardList cards={dealerHand} />
-        <button className="btn btn-success mt-4" onClick={() => alert("You get hit!")}>Hit Me</button>
-        <button className="btn btn-primary mt-4" onClick={handleStand}>Stand</button>
-        <h4>You</h4>
-        <CardList cards={myHand} />
-      </div>
+    <div className="bg-light mb-3 p-4">
+      {resources.map(resource => <Counter key={resource.name} label={resource.name} amount={resource.count} />)}
+
+
+      {/* <Counter label="Bears" amount={3}/>
+      <Counter label="Elk" amount={2}/>
+      <Counter label="Foxes" amount={5}/>
+      <Counter label="Hawks" amount={4}/>
+      <Counter label="Fish" amount={1}/> */}
     </div>
   )
 }
 
-// We never ever ever call a component function
-// BAD BLASPHEMY: App()
-// GOOD PRETENDING: <App/>
+// Cosplaying as HTML
+// <Counter label="Fish" amount={1}/>
+// Translate it from HTML attributes to a Javascript object with properties
+// Counter({
+//   label: "Bears",
+//   amount: 3
+// })
 
-// We're calling attributes props form here on out
+
+// Props are parameters cosplaying as HTML attributes

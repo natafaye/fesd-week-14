@@ -10,3 +10,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <App />
   </React.StrictMode>,
 )
+
+// We are at comicon and functions are cosplaying as HTML
+// This: <App/>
+// Will get converted to
+// This: App()
+// NEVER CALL A COMPONENT FUNCTION YOURSELF
