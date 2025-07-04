@@ -1,50 +1,35 @@
-import Counter from "./Counter"
+import BigCard from "./BigCard"
+import SmallCard from "./SmallCard"
+import { flashcards } from "./myData"
 
-const resources = [
-  {
-    name: "Bears",
-    count: 3
-  },
-  {
-    name: "Elk",
-    count: 10
-  },
-  {
-    name: "Fish",
-    count: 1
-  },
-]
-
-// const mappedArray = [
-//   <Counter label="Bears" amount={3} />,
-//   <Counter label="Elk" amount={10} />,
-//   <Counter label="Fish" amount={1} />
+// const flashcards = [
+//     "apple",
+//     "banana",
+//     "orange",
+//     "mango"
 // ]
 
-// The declarative way to show an array of stuff is using the map array method
+// const mappedArray = [
+//     <SmallCard/>,
+//     <SmallCard/>,
+//     <SmallCard/>,
+//     <SmallCard/>
+// ]
 
 export default function App() {
   return (
-    <div className="bg-light mb-3 p-4">
-      {resources.map(resource => <Counter key={resource.name} label={resource.name} amount={resource.count} />)}
-
-
-      {/* <Counter label="Bears" amount={3}/>
-      <Counter label="Elk" amount={2}/>
-      <Counter label="Foxes" amount={5}/>
-      <Counter label="Hawks" amount={4}/>
-      <Counter label="Fish" amount={1}/> */}
+    <div className="container">
+        <h1 className="display-1 mt-3 mb-4">Flashcards</h1>
+        <BigCard/>
+        <div className="d-flex gap-3 mt-4">
+            {flashcards.map(card => <SmallCard text={card.fruit} color={card.color}/>)}
+        </div>
     </div>
   )
 }
 
-// Cosplaying as HTML
-// <Counter label="Fish" amount={1}/>
-// Translate it from HTML attributes to a Javascript object with properties
-// Counter({
-//   label: "Bears",
-//   amount: 3
-// })
 
 
-// Props are parameters cosplaying as HTML attributes
+// <SmallCard text="apple" color="green"/> {/* SmallCard({ text: "apple", color: "green" }) */}
+// <SmallCard text="strawberry"/>{/* SmallCard({ text: "strawberry", color: "red" }) */}
+// <SmallCard text="mango" color="yellow"/>{/* SmallCard({ text: "mango", color: "yellow" }) */}
